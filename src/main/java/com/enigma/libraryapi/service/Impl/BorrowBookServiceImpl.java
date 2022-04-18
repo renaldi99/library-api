@@ -51,14 +51,16 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     public BorrowBook updateBorrowBook(BorrowBook borrowBook) {
         Member member = memberRepository.findById(borrowBook.getMember().getId()).get();
         Book book = bookRepository.findById(borrowBook.getBook().getId()).get();
-        BorrowBook borrowBookDate = borrowBookRepository.findById(borrowBook.getId()).get();
-        LocalDateTime dateTimeBorrowed = borrowBookDate.getBorrowedDate();
-        LocalDateTime dateTimeReturn = borrowBookDate.getReturnDate();
+        BorrowBook borrowBookAttr = borrowBookRepository.findById(borrowBook.getId()).get();
+        LocalDateTime dateTimeBorrowed = borrowBookAttr.getBorrowedDate();
+        LocalDateTime dateTimeReturn = borrowBookAttr.getReturnDate();
+        String getStatus = borrowBookAttr.getStatus();
 
         borrowBook.setMember(member);
         borrowBook.setBook(book);
         borrowBook.setBorrowedDate(dateTimeBorrowed);
         borrowBook.setReturnDate(dateTimeReturn);
+        borrowBook.setStatus(getStatus);
         return borrowBookRepository.save(borrowBook);
     }
 

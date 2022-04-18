@@ -8,7 +8,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.xml.crypto.Data;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MemberSpecification {
@@ -28,6 +31,14 @@ public class MemberSpecification {
                 if (!(memberSearchDTO.getSearchByStatus() == null)) {
                     Predicate memberStatusPredicate = criteriaBuilder.like(root.get("status"), "%" + memberSearchDTO.getSearchByStatus().toLowerCase() + "%");
                     predicates.add(memberStatusPredicate);
+                }
+                if (!(memberSearchDTO.getSearchByDateOfBirth() == null)) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    String modifiedDateFormated = simpleDateFormat.format(memberSearchDTO.getSearchByDateOfBirth());
+
+                    Predicate createDatePredicate = criteriaBuilder.equal(criteriaBuilder.function("TO_CHAR", String.class, root.get("dateOfBirth"),
+                            criteriaBuilder.literal("yyyy-MM-dd")), modifiedDateFormated);
+                    predicates.add(createDatePredicate);
                 }
                 Predicate[] arrayPredicate = predicates.toArray(new Predicate[predicates.size()]);
                 return criteriaBuilder.and(arrayPredicate);
