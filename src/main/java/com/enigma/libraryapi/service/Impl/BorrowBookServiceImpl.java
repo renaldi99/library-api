@@ -1,8 +1,10 @@
 package com.enigma.libraryapi.service.Impl;
 
+import com.enigma.libraryapi.constant.ResponseMessage;
 import com.enigma.libraryapi.entity.Book;
 import com.enigma.libraryapi.entity.BorrowBook;
 import com.enigma.libraryapi.entity.Member;
+import com.enigma.libraryapi.exception.StockNotEnoughException;
 import com.enigma.libraryapi.repository.BookRepository;
 import com.enigma.libraryapi.repository.BorrowBookRepository;
 import com.enigma.libraryapi.repository.MemberRepository;
@@ -13,6 +15,7 @@ import com.enigma.libraryapi.utils.AddDayJodaTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
@@ -28,6 +31,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     BookService bookService;
 
     @Override
+    @Transactional
     public BorrowBook saveBorrowBook(BorrowBook borrowBook) {
         Member member = memberService.getMemberById(borrowBook.getMember().getId());
         Book book = bookService.getBookById(borrowBook.getBook().getId());
@@ -38,8 +42,9 @@ public class BorrowBookServiceImpl implements BorrowBookService {
             borrowBook.setBook(book);
             borrowBook.setStatus("Active");
             return borrowBookRepository.save(borrowBook);
+        } else {
+            throw new StockNotEnoughException(ResponseMessage.NOT_ENOUGH);
         }
-        return null;
     }
 
     @Override
