@@ -18,11 +18,11 @@ public class ReturnBookServiceImpl implements ReturnBookService {
     ReturnBookRepository returnBookRepository;
 
     @Autowired
-    BorrowBookRepository borrowBookRepository;
+    BorrowBookService borrowBookService;
 
     @Override
     public ReturnBook createReturnBook(ReturnBook returnBook) {
-        BorrowBook borrowBook = borrowBookRepository.findById(returnBook.getBorrowBook().getId()).get();
+        BorrowBook borrowBook = borrowBookService.getBorrowBookById(returnBook.getBorrowBook().getId());
 
         returnBook.setReturnDate(LocalDateTime.now());
         if (returnBook.getReturnDate().isAfter(borrowBook.getReturnDate())) returnBook.setCharge(10000);

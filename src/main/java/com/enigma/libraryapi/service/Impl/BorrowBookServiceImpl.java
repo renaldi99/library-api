@@ -22,15 +22,15 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     BorrowBookRepository borrowBookRepository;
 
     @Autowired
-    MemberRepository memberRepository;
+    MemberService memberService;
 
     @Autowired
-    BookRepository bookRepository;
+    BookService bookService;
 
     @Override
     public BorrowBook saveBorrowBook(BorrowBook borrowBook) {
-        Member member = memberRepository.findById(borrowBook.getMember().getId()).get();
-        Book book = bookRepository.findById(borrowBook.getBook().getId()).get();
+        Member member = memberService.getMemberById(borrowBook.getMember().getId());
+        Book book = bookService.getBookById(borrowBook.getBook().getId());
 
         if (book.getStock() > 0) {
             book.setStock(book.getStock() - 1);
@@ -49,8 +49,8 @@ public class BorrowBookServiceImpl implements BorrowBookService {
 
     @Override
     public BorrowBook updateBorrowBook(BorrowBook borrowBook) {
-        Member member = memberRepository.findById(borrowBook.getMember().getId()).get();
-        Book book = bookRepository.findById(borrowBook.getBook().getId()).get();
+        Member member = memberService.getMemberById(borrowBook.getMember().getId());
+        Book book = bookService.getBookById(borrowBook.getBook().getId());
         BorrowBook borrowBookAttr = borrowBookRepository.findById(borrowBook.getId()).get();
         LocalDateTime dateTimeBorrowed = borrowBookAttr.getBorrowedDate();
         LocalDateTime dateTimeReturn = borrowBookAttr.getReturnDate();
