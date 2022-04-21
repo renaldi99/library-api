@@ -30,8 +30,13 @@ public class ReturnBookServiceImpl implements ReturnBookService {
         BorrowBook borrowBook = borrowBookService.getBorrowBookById(returnBook.getBorrowBook().getId());
 
         returnBook.setReturnDate(LocalDateTime.now());
-        if (returnBook.getReturnDate().isAfter(borrowBook.getReturnDate())) returnBook.setCharge(10000);
-        else returnBook.setCharge(0);
+
+        if (returnBook.getReturnDate().isAfter(borrowBook.getReturnDate())) {
+            Integer difference = returnBook.getReturnDate().compareTo(borrowBook.getReturnDate());
+            returnBook.setCharge(difference * 500);
+        } else {
+            returnBook.setCharge(0);
+        }
         borrowBook.setStatus("Inactive");
         borrowBook.getBook().setStock(borrowBook.getBook().getStock() + 1);
         returnBook.setBorrowBook(borrowBook);
